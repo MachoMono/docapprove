@@ -1,0 +1,30 @@
+.badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 500;
+  text-transform: capitalize;
+}
+
+.draft {
+  background: var(--surface-elevated);
+  color: var(--text-secondary);
+}
+
+.pending {
+  background: rgba(245, 158, 11, 0.15);
+  color: var(--warning);
+  animation: pulse 2s ease-in-out infinite;
+}
+
+.approved {
+  background: rgba(16, 185, 129, 0.15);
+  color: var(--primary);
+}
+
+.rejected {
+  background: rgba(239, 68, 68, 0.15);
+  color: var(--danger);
+}

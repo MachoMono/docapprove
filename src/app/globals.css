@@ -1,0 +1,133 @@
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&display=swap');
+
+:root {
+  --background: #0D0D0D;
+  --surface: #1A1A1A;
+  --surface-elevated: #242424;
+  --border: #333333;
+  --primary: #10B981;
+  --primary-hover: #059669;
+  --danger: #EF4444;
+  --danger-hover: #DC2626;
+  --warning: #F59E0B;
+  --text-primary: #FAFAFA;
+  --text-secondary: #A1A1A1;
+  --text-tertiary: #6B6B6B;
+  
+  /* Shadows and depth */
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.4);
+  --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.5);
+  --shadow-glow: 0 0 20px rgba(16, 185, 129, 0.15);
+  
+  /* Focus */
+  --focus-ring: 0 0 0 2px var(--background), 0 0 0 4px var(--primary);
+}
+
+[data-theme="sepia"] {
+  --background: #E8E0D0;
+  --surface: #F5EEE0;
+  --surface-elevated: #E5DCC8;
+  --border: #C9BBAA;
+  --primary: #7C5E2E;
+  --primary-hover: #5E4523;
+  --danger: #C0392B;
+  --danger-hover: #A93226;
+  --warning: #B8860B;
+  --text-primary: #3D3426;
+  --text-secondary: #5C4E3D;
+  --text-tertiary: #8A7B6A;
+  
+  /* Sepia shadows */
+  --shadow-sm: 0 1px 2px rgba(61, 52, 38, 0.08);
+  --shadow-md: 0 4px 12px rgba(61, 52, 38, 0.1);
+  --shadow-lg: 0 8px 24px rgba(61, 52, 38, 0.12);
+  --shadow-glow: 0 0 20px rgba(124, 94, 46, 0.08);
+  
+  /* Sepia focus */
+  --focus-ring: 0 0 0 2px var(--background), 0 0 0 4px var(--primary);
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html,
+body {
+  max-width: 100vw;
+  overflow-x: hidden;
+}
+
+body {
+  color: var(--text-primary);
+  background: var(--background);
+  font-family: 'IBM Plex Sans', sans-serif;
+  font-size: 14px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button {
+  font-family: inherit;
+  cursor: pointer;
+}
+
+input, textarea {
+  font-family: inherit;
+}
+
+h1 {
+  font-size: 32px;
+  font-weight: 600;
+}
+
+h2 {
+  font-size: 24px;
+  font-weight: 600;
+}
+
+h3 {
+  font-size: 18px;
+  font-weight: 500;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+/* Focus styles for accessibility */
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring);
+}
+
+a:focus:not(:focus-visible),
+button:focus:not(:focus-visible),
+input:focus:not(:focus-visible),
+textarea:focus:not(:focus-visible),
+select:focus:not(:focus-visible) {
+  box-shadow: none;
+}
