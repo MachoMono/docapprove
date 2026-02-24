@@ -1,0 +1,72 @@
+.panel {
+  background: #fff;
+  border: 1px solid #d0d7de;
+  border-radius: 6px;
+  padding: 16px;
+  margin-bottom: 16px;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.header h3 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.empty {
+  color: #656d76;
+  font-size: 14px;
+  text-align: center;
+  padding: 20px;
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+.item {
+  padding: 10px;
+  background: #f6f8fa;
+  border-radius: 6px;
+  font-size: 13px;
+}
+
+.time {
+  color: #656d76;
+  font-size: 11px;
+  margin-bottom: 4px;
+}
+
+.action {
+  font-weight: 500;
+  font-size: 13px;
+}
+
+.actor {
+  color: #24292f;
+  font-size: 12px;
+}
+
+.details {
+  color: #656d76;
+  font-size: 12px;
+  margin-top: 4px;
+}
+
+.positive {
+  color: #1a7f37;
+}
+
+.negative {
+  color: #cf222e;
+}

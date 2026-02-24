@@ -20,6 +20,29 @@ DocApprove provides a streamlined workflow for document approval processes. User
 - **Approved** - Review completed successfully
 - **Rejected** - Changes requested
 
+### Multi-Level Approval Chains
+- Add multiple approvers in sequence
+- Approvers review in defined order
+- Track each approver's decision with comments
+- Automatic status update when all approvers have responded
+
+### External Reviewers
+- Invite external stakeholders via email
+- Unique access tokens for secure review
+- Guests can approve or reject without system accounts
+- Useful for client reviews, legal checks, etc.
+
+### Deadline Tracking
+- Set due dates for document approvals
+- Track overdue approvals
+- Visual indicators for approaching deadlines
+
+### Audit Trail
+- Complete history of all document actions
+- Track who performed each action
+- Timestamps for all events
+- Filterable by document or view all activity
+
 ### Semantic Search
 - AI-powered document search using vector embeddings
 - Natural language query support
@@ -73,7 +96,7 @@ NEXT_PUBLIC_API_URL=http://localhost:3000
 
 5. Initialize the database schema:
 ```bash
-# Run the SQL schema to create tables
+psql $DATABASE_URL -f migrations/001_wrike_features.sql
 ```
 
 6. Start the development server:
@@ -135,6 +158,51 @@ docapprove/
 | version_number | INTEGER | Version sequence |
 | created_at | TIMESTAMP | Creation timestamp |
 
+### Approval Chains Table
+| Column | Type | Description |
+|--------|------|-------------|
+| id | UUID | Primary key |
+| document_id | UUID | Foreign key to documents |
+| approver_email | VARCHAR(255) | Approver email |
+| approver_name | VARCHAR(255) | Approver name |
+| order | INTEGER | Approval sequence order |
+| status | VARCHAR(20) | pending/approved/rejected |
+| comment | TEXT | Approver comment |
+| resolved_at | TIMESTAMP | Resolution timestamp |
+| created_at | TIMESTAMP | Creation timestamp |
+
+### External Reviewers Table
+| Column | Type | Description |
+|--------|------|-------------|
+| id | UUID | Primary key |
+| document_id | UUID | Foreign key to documents |
+| email | VARCHAR(255) | Reviewer email |
+| name | VARCHAR(255) | Reviewer name |
+| token | VARCHAR(64) | Unique access token |
+| status | VARCHAR(20) | pending/approved/rejected |
+| comment | TEXT | Review comment |
+| resolved_at | TIMESTAMP | Resolution timestamp |
+| created_at | TIMESTAMP | Creation timestamp |
+
+### Approval Deadlines Table
+| Column | Type | Description |
+|--------|------|-------------|
+| id | UUID | Primary key |
+| document_id | UUID | Foreign key to documents |
+| deadline | TIMESTAMP | Due date |
+| created_at | TIMESTAMP | Creation timestamp |
+
+### Audit Logs Table
+| Column | Type | Description |
+|--------|------|-------------|
+| id | UUID | Primary key |
+| document_id | UUID | Foreign key to documents |
+| action | VARCHAR(50) | Action type |
+| actor_email | VARCHAR(255) | Actor email |
+| actor_name | VARCHAR(255) | Actor name |
+| details | TEXT | Additional details |
+| created_at | TIMESTAMP | Creation timestamp |
+
 ## API Endpoints
 
 ### Documents
@@ -148,6 +216,39 @@ docapprove/
 | DELETE | /api/documents/[id] | Delete document |
 | POST | /api/documents/[id]/approve | Approve document |
 | POST | /api/documents/[id]/reject | Reject document |
+
+### Approval Chains
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | /api/documents/[id]/approvers | Get approval chain |
+| POST | /api/documents/[id]/approvers | Add approver |
+| DELETE | /api/documents/[id]/approvers?approverId=... | Remove approver |
+| POST | /api/documents/[id]/approvers/[approverId] | Resolve approver |
+
+### External Reviewers
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | /api/documents/[id]/reviewers | Get external reviewers |
+| POST | /api/documents/[id]/reviewers | Add external reviewer |
+| DELETE | /api/documents/[id]/reviewers?reviewerId=... | Remove reviewer |
+| POST | /api/external/respond | External reviewer response |
+
+### Deadlines
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | /api/documents/[id]/deadline | Get deadline |
+| POST | /api/documents/[id]/deadline | Set deadline |
+| DELETE | /api/documents/[id]/deadline | Remove deadline |
+
+### Audit Logs
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | /api/documents/[id]/audit | Get document audit log |
+| GET | /api/audit | Get all audit logs |
 
 ### Search
 
