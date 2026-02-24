@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DocApprove - Documentation</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 40px 20px;
+            line-height: 1.6;
+            color: #24292f;
+        }
+        h1 { border-bottom: 1px solid #d0d7de; padding-bottom: 10px; }
+        h2 { border-bottom: 1px solid #d0d7de; padding-bottom: 8px; margin-top: 30px; }
+        h3 { margin-top: 24px; }
+        code { background: #f6f8fa; padding: 2px 6px; border-radius: 3px; }
+        pre { background: #f6f8fa; padding: 16px; border-radius: 6px; overflow-x: auto; }
+        pre code { background: none; padding: 0; }
+        table { border-collapse: collapse; width: 100%; }
+        th, td { border: 1px solid #d0d7de; padding: 8px 12px; text-align: left; }
+        th { background: #f6f8fa; }
+        a { color: #0969da; }
+    </style>
+</head>
+<body>
+    <h1>DocApprove</h1>
+    <p>A document approval workflow application with semantic search capabilities. DocApprove enables teams to manage document submissions, track approval statuses, and search through documentation using AI-powered semantic search.</p>
+    
+    <h2>Overview</h2>
+    <p>DocApprove provides a streamlined workflow for document approval processes. Users can submit documents for review, approvers can approve or reject submissions, and all team members can search through the document repository using natural language queries powered by vector embeddings.</p>
+    
+    <h2>Features</h2>
+    <h3>Document Management</h3>
+    <ul>
+        <li>Create new documents with title and content</li>
+        <li>Edit existing documents</li>
+        <li>Delete documents</li>
+        <li>Version history tracking</li>
+    </ul>
+    
+    <h3>Approval Workflow</h3>
+    <ul>
+        <li><strong>Draft</strong> - Initial document state</li>
+        <li><strong>Pending</strong> - Submitted for review</li>
+        <li><strong>Approved</strong> - Review completed successfully</li>
+        <li><strong>Rejected</strong> - Changes requested</li>
+    </ul>
+    
+    <h3>Semantic Search</h3>
+    <ul>
+        <li>AI-powered document search using vector embeddings</li>
+        <li>Natural language query support</li>
+        <li>Similarity-based ranking of results</li>
+    </ul>
+    
+    <h3>Dashboard and Analytics</h3>
+    <ul>
+        <li>Overview of all documents by status</li>
+        <li>Statistics including total, pending, and approved counts</li>
+        <li>Weekly approval metrics</li>
+    </ul>
+    
+    <h2>Tech Stack</h2>
+    <ul>
+        <li><strong>Framework</strong>: Next.js 14 (App Router)</li>
+        <li><strong>Language</strong>: TypeScript</li>
+        <li><strong>Database</strong>: PostgreSQL with pgvector extension</li>
+        <li><strong>AI</strong>: Ollama for embeddings</li>
+        <li><strong>Runtime</strong>: Bun</li>
+    </ul>
+    
+    <h2>Prerequisites</h2>
+    <ul>
+        <li>Node.js 18+ or Bun runtime</li>
+        <li>PostgreSQL 15+ with pgvector extension</li>
+        <li>Ollama instance (optional, for semantic search)</li>
+    </ul>
+    
+    <h2>Installation</h2>
+    <ol>
+        <li>Clone the repository:
+            <pre><code>git clone https://github.com/MachoMono/docapprove.git
+cd docapprove</code></pre>
+        </li>
+        <li>Install dependencies:
+            <pre><code>bun install</code></pre>
+        </li>
+        <li>Set up the database:
+            <pre><code>CREATE DATABASE docapprove;
+CREATE EXTENSION IF NOT EXISTS vector;</code></pre>
+        </li>
+        <li>Configure environment variables in <code>.env.local</code>:
+            <pre><code>DATABASE_URL=postgresql://user:password@localhost:5432/docapprove
+OLLAMA_BASE_URL=http://localhost:11434
+OLLAMA_MODEL=nomic-embed-text
+NEXT_PUBLIC_API_URL=http://localhost:3000</code></pre>
+        </li>
+        <li>Start the development server:
+            <pre><code>bun run dev</code></pre>
+        </li>
+        <li>Open <a href="http://localhost:3000">http://localhost:3000</a> in your browser</li>
+    </ol>
+    
+    <h2>Database Schema</h2>
+    <h3>Documents Table</h3>
+    <table>
+        <tr><th>Column</th><th>Type</th><th>Description</th></tr>
+        <tr><td>id</td><td>UUID</td><td>Primary key</td></tr>
+        <tr><td>title</td><td>VARCHAR(255)</td><td>Document title</td></tr>
+        <tr><td>content</td><td>TEXT</td><td>Document body</td></tr>
+        <tr><td>status</td><td>VARCHAR(20)</td><td>draft/pending/approved/rejected</td></tr>
+        <tr><td>author</td><td>VARCHAR(255)</td><td>Document creator</td></tr>
+        <tr><td>embedding</td><td>vector(768)</td><td>Vector embedding for search</td></tr>
+        <tr><td>created_at</td><td>TIMESTAMP</td><td>Creation timestamp</td></tr>
+        <tr><td>updated_at</td><td>TIMESTAMP</td><td>Last modification</td></tr>
+    </table>
+    
+    <h2>API Endpoints</h2>
+    <table>
+        <tr><th>Method</th><th>Endpoint</th><th>Description</th></tr>
+        <tr><td>GET</td><td>/api/documents</td><td>List all documents</td></tr>
+        <tr><td>POST</td><td>/api/documents</td><td>Create new document</td></tr>
+        <tr><td>GET</td><td>/api/documents/[id]</td><td>Get document by ID</td></tr>
+        <tr><td>PUT</td><td>/api/documents/[id]</td><td>Update document</td></tr>
+        <tr><td>DELETE</td><td>/api/documents/[id]</td><td>Delete document</td></tr>
+        <tr><td>POST</td><td>/api/documents/[id]/approve</td><td>Approve document</td></tr>
+        <tr><td>POST</td><td>/api/documents/[id]/reject</td><td>Reject document</td></tr>
+    </table>
+    
+    <h2>Usage</h2>
+    <h3>Creating a Document</h3>
+    <ol>
+        <li>Navigate to the Documents page</li>
+        <li>Click "New Document"</li>
+        <li>Enter title and content</li>
+        <li>Click "Create" to save as draft</li>
+    </ol>
+    
+    <h3>Submitting for Review</h3>
+    <ol>
+        <li>Open a draft document</li>
+        <li>Click "Submit for Review"</li>
+        <li>Document status changes to "pending"</li>
+    </ol>
+    
+    <h3>Approving or Rejecting</h3>
+    <ol>
+        <li>Open a pending document</li>
+        <li>Click "Approve" or "Reject"</li>
+        <li>Document status updates accordingly</li>
+    </ol>
+    
+    <h2>Environment Variables</h2>
+    <table>
+        <tr><th>Variable</th><th>Description</th><th>Default</th></tr>
+        <tr><td>DATABASE_URL</td><td>PostgreSQL connection string</td><td>Required</td></tr>
+        <tr><td>OLLAMA_BASE_URL</td><td>Ollama API endpoint</td><td>http://localhost:11434</td></tr>
+        <tr><td>OLLAMA_MODEL</td><td>Embedding model name</td><td>nomic-embed-text</td></tr>
+        <tr><td>NEXT_PUBLIC_API_URL</td><td>Public API URL</td><td>http://localhost:3000</td></tr>
+    </table>
+    
+    <hr>
+    <p><small>MIT License</small></p>
+</body>
+</html>
