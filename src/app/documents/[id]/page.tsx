@@ -2,7 +2,7 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import styles from './page.module.css';
 import StatusBadge from '@/components/StatusBadge';
-import ApprovalActions from './ApprovalActions';
+import DocumentSidebar from './DocumentSidebar';
 
 async function getDocument(id: string) {
   try {
@@ -61,7 +61,7 @@ export default async function DocumentPage({ params }: { params: Promise<{ id: s
         </div>
 
         <div className={styles.sidebar}>
-          <ApprovalActions document={document} />
+          <DocumentSidebar document={document} />
         </div>
       </div>
     </div>
