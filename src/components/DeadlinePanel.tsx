@@ -1,7 +1,9 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import styles from './DeadlinePanel.module.css';
+import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 
 interface Props {
   documentId: string;
@@ -74,58 +76,54 @@ export default function DeadlinePanel({ documentId, mockDeadline }: Props) {
     const diff = date.getTime() - now.getTime();
     const days = Math.ceil(diff / (1000 * 60 * 60 * 24));
     
-    if (days < 0) return { text: 'Overdue', class: styles.overdue };
-    if (days === 0) return { text: 'Due today', class: styles.today };
-    if (days === 1) return { text: 'Due tomorrow', class: styles.soon };
-    if (days <= 3) return { text: `Due in ${days} days`, class: styles.soon };
-    return { text: date.toLocaleDateString(), class: '' };
+    if (days < 0) return { text: 'Overdue', variant: 'destructive' as const };
+    if (days === 0) return { text: 'Due today', variant: 'destructive' as const };
+    if (days === 1) return { text: 'Due tomorrow', variant: 'warning' as const };
+    if (days <= 3) return { text: `Due in ${days} days`, variant: 'warning' as const };
+    return { text: date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }), variant: 'default' as const };
   };
 
-  if (loading) return <div className={styles.panel}>Loading...</div>;
+  if (loading) return <Card><CardContent className="pt-6">Loading...</CardContent></Card>;
 
   return (
-    <div className={styles.panel}>
-      <div className={styles.header}>
-        <h3>Deadline</h3>
-        <button 
-          className={styles.addButton}
-          onClick={() => setShowForm(!showForm)}
-        >
-          {showForm ? 'Cancel' : deadline ? 'Change' : '+ Set'}
-        </button>
-      </div>
-
-      {showForm && (
-        <div className={styles.form}>
-          <input
-            type="datetime-local"
-            value={newDeadline}
-            onChange={(e) => setNewDeadline(e.target.value)}
-            className={styles.input}
-          />
-          <button onClick={setDeadlineDate} className={styles.submitButton}>
-            Save
-          </button>
+    <Card>
+      <CardHeader className="pb-3">
+        <div className="flex items-center justify-between">
+          <CardTitle className="text-sm">Deadline</CardTitle>
+          <Button variant="outline" size="sm" onClick={() => setShowForm(!showForm)}>
+            {showForm ? 'Cancel' : deadline ? 'Change' : '+ Set'}
+          </Button>
         </div>
-      )}
+      </CardHeader>
+      <CardContent>
+        {showForm && (
+          <div className="flex gap-2 mb-3">
+            <Input
+              type="datetime-local"
+              value={newDeadline}
+              onChange={(e) => setNewDeadline(e.target.value)}
+              className="h-8"
+            />
+            <Button size="sm" onClick={setDeadlineDate} className="h-8">Save</Button>
+          </div>
+        )}
 
-      {deadline ? (
-        <div className={styles.deadlineDisplay}>
-          {(() => {
-            const { text, class: statusClass } = formatDeadline(deadline);
-            return (
-              <>
-                <div className={`${styles.date} ${statusClass}`}>{text}</div>
-                <button onClick={removeDeadline} className={styles.removeBtn}>
-                  Remove
-                </button>
-              </>
-            );
-          })()}
-        </div>
-      ) : (
-        !showForm && <p className={styles.empty}>No deadline set.</p>
-      )}
-    </div>
+        {deadline ? (
+          <div className="flex items-center justify-between p-3 rounded-lg bg-muted/50">
+            <div>
+              <div className="text-sm font-medium">{formatDeadline(deadline).text}</div>
+              <div className="text-xs text-muted-foreground">
+                {new Date(deadline).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}
+              </div>
+            </div>
+            <Button size="sm" variant="ghost" onClick={removeDeadline}>
+              <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            </Button>
+          </div>
+        ) : !showForm && (
+          <p className="text-sm text-muted-foreground text-center py-2">No deadline set.</p>
+        )}
+      </CardContent>
+    </Card>
   );
 }

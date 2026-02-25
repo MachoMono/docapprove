@@ -15,7 +15,7 @@ const MOCK_DOCUMENT_ID = 'mock-doc-123';
 
 export default function DocumentSidebar({ document }: { document: Document }) {
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+    <div className="space-y-4">
       <ApprovalActions document={document} />
       <DeadlinePanel documentId={MOCK_DOCUMENT_ID} mockDeadline="2026-03-01T17:00:00" />
       <ApprovalChainPanel 

@@ -1,7 +1,10 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import styles from './ExternalReviewersPanel.module.css';
+import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Badge } from '@/components/ui/badge';
 
 interface Reviewer {
   id: string;
@@ -90,89 +93,77 @@ export default function ExternalReviewersPanel({ documentId, mockData }: Props) 
     }
   };
 
-  const getStatusColor = (status: string) => {
+  const getStatusVariant = (status: string): "success" | "destructive" | "warning" => {
     switch (status) {
-      case 'approved': return styles.approved;
-      case 'rejected': return styles.rejected;
-      default: return styles.pending;
+      case 'approved': return 'success';
+      case 'rejected': return 'destructive';
+      default: return 'warning';
     }
   };
 
-  if (loading) return <div className={styles.panel}>Loading...</div>;
+  if (loading) return <Card><CardContent className="pt-6">Loading...</CardContent></Card>;
 
   return (
-    <div className={styles.panel}>
-      <div className={styles.header}>
-        <h3>External Reviewers</h3>
-        <button 
-          className={styles.addButton}
-          onClick={() => setShowForm(!showForm)}
-        >
-          {showForm ? 'Cancel' : '+ Invite Reviewer'}
-        </button>
-      </div>
-
-      {showForm && (
-        <div className={styles.form}>
-          <input
-            type="text"
-            placeholder="Name"
-            value={newReviewer.name}
-            onChange={(e) => setNewReviewer({ ...newReviewer, name: e.target.value })}
-            className={styles.input}
-          />
-          <input
-            type="email"
-            placeholder="Email"
-            value={newReviewer.email}
-            onChange={(e) => setNewReviewer({ ...newReviewer, email: e.target.value })}
-            className={styles.input}
-          />
-          <button onClick={addReviewer} className={styles.submitButton}>
-            Invite
-          </button>
+    <Card>
+      <CardHeader className="pb-3">
+        <div className="flex items-center justify-between">
+          <CardTitle className="text-sm">External Reviewers</CardTitle>
+          <Button variant="outline" size="sm" onClick={() => setShowForm(!showForm)}>
+            {showForm ? 'Cancel' : '+ Invite'}
+          </Button>
         </div>
-      )}
+      </CardHeader>
+      <CardContent className="space-y-3">
+        {showForm && (
+          <div className="flex gap-2">
+            <Input
+              placeholder="Name"
+              value={newReviewer.name}
+              onChange={(e) => setNewReviewer({ ...newReviewer, name: e.target.value })}
+              className="h-8"
+            />
+            <Input
+              placeholder="Email"
+              type="email"
+              value={newReviewer.email}
+              onChange={(e) => setNewReviewer({ ...newReviewer, email: e.target.value })}
+              className="h-8"
+            />
+            <Button size="sm" onClick={addReviewer} className="h-8">Invite</Button>
+          </div>
+        )}
 
-      {reviewers.length === 0 ? (
-        <p className={styles.empty}>No external reviewers invited yet.</p>
-      ) : (
-        <div className={styles.list}>
-          {reviewers.map((reviewer) => (
-            <div key={reviewer.id} className={styles.item}>
-              <div className={styles.avatar}>
-                {reviewer.name.charAt(0).toUpperCase()}
-              </div>
-              <div className={styles.info}>
-                <div className={styles.name}>{reviewer.name}</div>
-                <div className={styles.email}>{reviewer.email}</div>
-                {reviewer.comment && (
-                  <div className={styles.comment}>"{reviewer.comment}"</div>
+        {reviewers.length === 0 ? (
+          <p className="text-sm text-muted-foreground text-center py-4">No external reviewers invited yet.</p>
+        ) : (
+          <div className="space-y-2">
+            {reviewers.map((reviewer) => (
+              <div key={reviewer.id} className="flex items-center gap-3 p-2 rounded-lg bg-muted/50">
+                <div className="w-8 h-8 rounded-full bg-purple-500/20 text-purple-600 flex items-center justify-center text-sm font-medium">
+                  {reviewer.name.charAt(0).toUpperCase()}
+                </div>
+                <div className="flex-1 min-w-0">
+                  <div className="text-sm font-medium truncate">{reviewer.name}</div>
+                  <div className="text-xs text-muted-foreground truncate">{reviewer.email}</div>
+                  {reviewer.comment && (
+                    <div className="text-xs text-muted-foreground italic mt-1">"{reviewer.comment}"</div>
+                  )}
+                </div>
+                <Badge variant={getStatusVariant(reviewer.status)} className="text-xs capitalize">
+                  {reviewer.status}
+                </Badge>
+                {reviewer.status === 'pending' && (
+                  <div className="flex gap-1">
+                    <Button size="sm" variant="ghost" className="h-7 px-2" onClick={() => copyReviewLink(reviewer.token)}>
+                      {copiedId === reviewer.token ? 'Copied!' : 'Copy Link'}
+                    </Button>
+                  </div>
                 )}
               </div>
-              <div className={`${styles.status} ${getStatusColor(reviewer.status)}`}>
-                {reviewer.status}
-              </div>
-              {reviewer.status === 'pending' && (
-                <button
-                  onClick={() => copyReviewLink(reviewer.token)}
-                  className={styles.linkBtn}
-                >
-                  {copiedId === reviewer.token ? 'Copied!' : 'Copy Link'}
-                </button>
-              )}
-              {reviewer.status === 'pending' && (
-                <button
-                  onClick={() => removeReviewer(reviewer.id)}
-                  className={styles.removeBtn}
-                >
-                  Remove
-                </button>
-              )}
-            </div>
-          ))}
-        </div>
-      )}
-    </div>
+            ))}
+          </div>
+        )}
+      </CardContent>
+    </Card>
   );
 }

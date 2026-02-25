@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import styles from './AuditLogPanel.module.css';
+import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 
 interface AuditLog {
   id: string;
@@ -58,43 +58,49 @@ export default function AuditLogPanel({ documentId, mockData }: Props) {
 
   const formatDate = (dateStr: string) => {
     const date = new Date(dateStr);
-    return date.toLocaleString();
+    return date.toLocaleString('en-US', { 
+      month: 'short', 
+      day: 'numeric',
+      hour: '2-digit', 
+      minute: '2-digit' 
+    });
   };
 
   const getActionColor = (action: string) => {
-    if (action.includes('APPROVED') || action.includes('SET')) return styles.positive;
-    if (action.includes('REJECTED') || action.includes('REMOVED')) return styles.negative;
-    return '';
+    if (action.includes('APPROVED') || action.includes('SET') || action.includes('CREATED')) return 'text-green-600';
+    if (action.includes('REJECTED') || action.includes('REMOVED')) return 'text-red-600';
+    return 'text-foreground';
   };
 
-  if (loading) return <div className={styles.panel}>Loading...</div>;
+  if (loading) return <Card><CardContent className="pt-6">Loading...</CardContent></Card>;
 
   return (
-    <div className={styles.panel}>
-      <div className={styles.header}>
-        <h3>Activity Log</h3>
-      </div>
-
-      {logs.length === 0 ? (
-        <p className={styles.empty}>No activity yet.</p>
-      ) : (
-        <div className={styles.list}>
-          {logs.map((log) => (
-            <div key={log.id} className={styles.item}>
-              <div className={styles.time}>{formatDate(log.created_at)}</div>
-              <div className={`${styles.action} ${getActionColor(log.action)}`}>
-                {formatAction(log.action)}
+    <Card>
+      <CardHeader className="pb-3">
+        <CardTitle className="text-sm">Activity Log</CardTitle>
+      </CardHeader>
+      <CardContent>
+        {logs.length === 0 ? (
+          <p className="text-sm text-muted-foreground text-center py-4">No activity yet.</p>
+        ) : (
+          <div className="space-y-2 max-h-64 overflow-y-auto">
+            {logs.map((log) => (
+              <div key={log.id} className="text-xs p-2 rounded-lg bg-muted/30">
+                <div className="flex items-center justify-between mb-1">
+                  <span className={`font-medium ${getActionColor(log.action)}`}>
+                    {formatAction(log.action)}
+                  </span>
+                  <span className="text-muted-foreground">{formatDate(log.created_at)}</span>
+                </div>
+                <div className="text-muted-foreground">{log.actor_name || log.actor_email}</div>
+                {log.details && (
+                  <div className="text-muted-foreground/70 mt-1">{log.details}</div>
+                )}
               </div>
-              <div className={styles.actor}>
-                {log.actor_name || log.actor_email}
-              </div>
-              {log.details && (
-                <div className={styles.details}>{log.details}</div>
-              )}
-            </div>
-          ))}
-        </div>
-      )}
-    </div>
+            ))}
+          </div>
+        )}
+      </CardContent>
+    </Card>
   );
 }
