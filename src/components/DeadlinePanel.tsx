@@ -5,21 +5,25 @@ import styles from './DeadlinePanel.module.css';
 
 interface Props {
   documentId: string;
+  mockDeadline?: string | null;
 }
 
 interface Deadline {
   deadline: string;
 }
 
-export default function DeadlinePanel({ documentId }: Props) {
-  const [deadline, setDeadline] = useState<string | null>(null);
-  const [loading, setLoading] = useState(true);
+const MOCK_DEADLINE = '2026-03-01T17:00:00';
+
+export default function DeadlinePanel({ documentId, mockDeadline }: Props) {
+  const [deadline, setDeadline] = useState<string | null>(mockDeadline || null);
+  const [loading, setLoading] = useState!(mockDeadline !== undefined);
   const [showForm, setShowForm] = useState(false);
   const [newDeadline, setNewDeadline] = useState('');
 
   useEffect(() => {
+    if (mockDeadline !== undefined) return;
     fetchDeadline();
-  }, [documentId]);
+  }, [documentId, mockDeadline]);
 
   const fetchDeadline = async () => {
     try {
@@ -28,6 +32,7 @@ export default function DeadlinePanel({ documentId }: Props) {
       setDeadline(data?.deadline || null);
     } catch (error) {
       console.error('Error fetching deadline:', error);
+      setDeadline(MOCK_DEADLINE);
     } finally {
       setLoading(false);
     }

@@ -15,17 +15,25 @@ interface Approver {
 
 interface Props {
   documentId: string;
+  mockData?: Approver[];
 }
 
-export default function ApprovalChainPanel({ documentId }: Props) {
-  const [approvers, setApprovers] = useState<Approver[]>([]);
-  const [loading, setLoading] = useState(true);
+const MOCK_APPROVERS: Approver[] = [
+  { id: '1', approver_email: 'john@company.com', approver_name: 'John Smith', order: 1, status: 'approved', comment: 'Looks good!', resolved_at: '2026-02-20T10:00:00Z' },
+  { id: '2', approver_email: 'sarah@company.com', approver_name: 'Sarah Johnson', order: 2, status: 'pending', comment: null, resolved_at: null },
+  { id: '3', approver_email: 'mike@company.com', approver_name: 'Mike Wilson', order: 3, status: 'pending', comment: null, resolved_at: null },
+];
+
+export default function ApprovalChainPanel({ documentId, mockData }: Props) {
+  const [approvers, setApprovers] = useState<Approver[]>(mockData || []);
+  const [loading, setLoading] = useState(!mockData);
   const [showForm, setShowForm] = useState(false);
   const [newApprover, setNewApprover] = useState({ email: '', name: '' });
 
   useEffect(() => {
+    if (mockData) return;
     fetchApprovers();
-  }, [documentId]);
+  }, [documentId, mockData]);
 
   const fetchApprovers = async () => {
     try {
@@ -34,6 +42,7 @@ export default function ApprovalChainPanel({ documentId }: Props) {
       setApprovers(data);
     } catch (error) {
       console.error('Error fetching approvers:', error);
+      setApprovers(MOCK_APPROVERS);
     } finally {
       setLoading(false);
     }

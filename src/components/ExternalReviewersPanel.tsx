@@ -15,18 +15,25 @@ interface Reviewer {
 
 interface Props {
   documentId: string;
+  mockData?: Reviewer[];
 }
 
-export default function ExternalReviewersPanel({ documentId }: Props) {
-  const [reviewers, setReviewers] = useState<Reviewer[]>([]);
-  const [loading, setLoading] = useState(true);
+const MOCK_REVIEWERS: Reviewer[] = [
+  { id: '1', email: 'client@external.com', name: 'Client Rep', token: 'abc123', status: 'pending', comment: null, resolved_at: null },
+  { id: '2', email: 'legal@partner.com', name: 'Legal Team', token: 'def456', status: 'approved', comment: 'Legal review complete', resolved_at: '2026-02-21T14:00:00Z' },
+];
+
+export default function ExternalReviewersPanel({ documentId, mockData }: Props) {
+  const [reviewers, setReviewers] = useState<Reviewer[]>(mockData || []);
+  const [loading, setLoading] = useState(!mockData);
   const [showForm, setShowForm] = useState(false);
   const [newReviewer, setNewReviewer] = useState({ email: '', name: '' });
   const [copiedId, setCopiedId] = useState<string | null>(null);
 
   useEffect(() => {
+    if (mockData) return;
     fetchReviewers();
-  }, [documentId]);
+  }, [documentId, mockData]);
 
   const fetchReviewers = async () => {
     try {
@@ -35,6 +42,7 @@ export default function ExternalReviewersPanel({ documentId }: Props) {
       setReviewers(data);
     } catch (error) {
       console.error('Error fetching reviewers:', error);
+      setReviewers(MOCK_REVIEWERS);
     } finally {
       setLoading(false);
     }

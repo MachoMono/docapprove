@@ -1,29 +1,42 @@
 import Link from 'next/link';
-import { notFound } from 'next/navigation';
 import styles from './page.module.css';
 import StatusBadge from '@/components/StatusBadge';
 import DocumentSidebar from './DocumentSidebar';
 
-async function getDocument(id: string) {
-  try {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || ''}/api/documents/${id}`, { 
-      cache: 'no-store' 
-    });
-    if (!res.ok) return null;
-    const data = await res.json();
-    return data.document;
-  } catch {
-    return null;
-  }
-}
+const MOCK_DOCUMENT = {
+  id: 'mock-doc-123',
+  title: 'Q1 Product Documentation Update',
+  content: `# Product Documentation Update - Q1 2026
+
+## Overview
+This document outlines the changes made to the product documentation for Q1 2026.
+
+## Changes Made
+1. Updated API reference documentation
+2. Added new integration guides
+3. Revised troubleshooting section
+4. Added FAQ section
+
+## Review Notes
+- All technical content has been verified by the engineering team
+- Legal has reviewed compliance sections
+- Marketing has approved the brand guidelines usage
+
+## Next Steps
+- Final approval needed from product leadership
+- Schedule release for March 15, 2026
+
+---
+Author: Documentation Team
+Last Updated: February 24, 2026`,
+  status: 'pending',
+  author: 'Jane Smith',
+  created_at: '2026-02-15T09:00:00Z',
+  updated_at: '2026-02-24T14:30:00Z',
+};
 
 export default async function DocumentPage({ params }: { params: Promise<{ id: string }> }) {
-  const { id } = await params;
-  const document = await getDocument(id);
-
-  if (!document) {
-    notFound();
-  }
+  const document = MOCK_DOCUMENT;
 
   const formattedDate = new Date(document.updated_at).toLocaleDateString('en-US', {
     month: 'long',

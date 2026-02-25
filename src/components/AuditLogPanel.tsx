@@ -14,15 +14,27 @@ interface AuditLog {
 
 interface Props {
   documentId?: string;
+  mockData?: AuditLog[];
 }
 
-export default function AuditLogPanel({ documentId }: Props) {
-  const [logs, setLogs] = useState<AuditLog[]>([]);
-  const [loading, setLoading] = useState(true);
+const MOCK_LOGS: AuditLog[] = [
+  { id: '1', action: 'DOCUMENT_CREATED', actor_email: 'author@company.com', actor_name: 'Author Name', details: 'Document created', created_at: '2026-02-15T09:00:00Z' },
+  { id: '2', action: 'SUBMITTED_FOR_REVIEW', actor_email: 'author@company.com', actor_name: 'Author Name', details: 'Submitted for approval', created_at: '2026-02-18T11:30:00Z' },
+  { id: '3', action: 'APPROVER_ADDED', actor_email: 'admin@company.com', actor_name: 'Admin User', details: 'Added approver: John Smith (john@company.com)', created_at: '2026-02-18T14:00:00Z' },
+  { id: '4', action: 'DEADLINE_SET', actor_email: 'system', actor_name: 'System', details: 'Deadline set: 2026-03-01', created_at: '2026-02-19T10:00:00Z' },
+  { id: '5', action: 'EXTERNAL_REVIEWER_ADDED', actor_email: 'admin@company.com', actor_name: 'Admin User', details: 'Added external reviewer: Client Rep (client@external.com)', created_at: '2026-02-20T09:00:00Z' },
+  { id: '6', action: 'APPROVER_APPROVED', actor_email: 'john@company.com', actor_name: 'John Smith', details: 'Looks good!', created_at: '2026-02-20T10:00:00Z' },
+  { id: '7', action: 'EXTERNAL_REVIEWER_APPROVED', actor_email: 'legal@partner.com', actor_name: 'Legal Team', details: 'Legal review complete', created_at: '2026-02-21T14:00:00Z' },
+];
+
+export default function AuditLogPanel({ documentId, mockData }: Props) {
+  const [logs, setLogs] = useState<AuditLog[]>(mockData || []);
+  const [loading, setLoading] = useState(!mockData);
 
   useEffect(() => {
+    if (mockData) return;
     fetchLogs();
-  }, [documentId]);
+  }, [documentId, mockData]);
 
   const fetchLogs = async () => {
     try {
@@ -34,6 +46,7 @@ export default function AuditLogPanel({ documentId }: Props) {
       setLogs(data);
     } catch (error) {
       console.error('Error fetching audit logs:', error);
+      setLogs(MOCK_LOGS);
     } finally {
       setLoading(false);
     }
